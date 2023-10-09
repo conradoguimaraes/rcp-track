@@ -1,0 +1,11 @@
+<order>
+<Cliente Name/ID="NAME">
+<Order Number="nnn1">
+<WorkPiece="PX" Quantity="XX" DueDate="DD" LatePen="LP" EarlyPen="EP"/>
+</order>
+
+<order>
+<Cliente Name/ID="NAME">
+<Order Number="nnn2">
+<WorkPiece="PX" Quantity="XX" DueDate="DD" LatePen="LP" EarlyPen="EP"/>
+</order>

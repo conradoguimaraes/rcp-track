@@ -1,0 +1,1 @@
+powershell.exe -ExecutionPolicy ByPass -noexit -command "& 'C:\ProgramData\anaconda3\shell\condabin\conda-hook.ps1' ; conda activate 'C:\ProgramData\anaconda3'; conda activate MeuAmbiente; cd 'C:\Users\Podengos\Documents\GitLab\infi\src\Conrado\UDP-IP\UDP Client v3.0 and Server v2.0'; cls; python UDPClient_v4.0.py

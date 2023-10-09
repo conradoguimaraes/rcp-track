@@ -1,0 +1,13 @@
+If the Client is started first the following error will appear:
+
+"ConnectionResetError: [WinError 10054] Uma ligação existente foi forçada a fechar pelo anfitrião remoto"
+
+
+This happens because there is no try-except statement when the Client tries to send the message. Enclosing this operation (the send message) in a try-except statement could solve the issue.
+
+
+try:
+  sendMessage(count) #tries to send the message
+except:
+  #ERROR:
+  pass #does nothing

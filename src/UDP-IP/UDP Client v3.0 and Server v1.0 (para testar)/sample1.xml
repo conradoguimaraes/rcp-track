@@ -1,0 +1,4 @@
+<DOCUMENT>
+<Client NameId=”Client B”/>
+<Order Number=”0101” WorkPiece=”P8” Quantity=”2” DueDate=”3" LatePen=”10” EarlyPen=”10”/>
+</DOCUMENT>

@@ -1,0 +1,10 @@
+<DOCUMENT>
+<Client NameId=”Client BB”/>
+<Order Number=”0042” WorkPiece=”P5” Quantity=”3” DueDate=”12” LatePen=”10” EarlyPen=”10”/>
+</DOCUMENT>
+
+<DOCUMENT>
+<Client NameId=”Client CC”/>
+<Order Number=”0052” WorkPiece=”P4” Quantity=”2” DueDate=”9” LatePen=”10” EarlyPen=”10”/>
+<Order Number=”0062” WorkPiece=”P3” Quantity=”5” DueDate=”11” LatePen=”10” EarlyPen=”10”/>
+</DOCUMENT>
