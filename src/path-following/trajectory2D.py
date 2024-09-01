@@ -1,6 +1,11 @@
 from config import readConfig
 import numpy as np
 
+
+import logging
+logger = logging.getLogger()
+
+
 class trajectory2D():
     def __init__(self, trajectoryName: str = "") -> None:
         """_summary_
@@ -16,24 +21,16 @@ class trajectory2D():
         if (trajectoryName == ""): raise Exception("[ERROR] You must provide the desired trajectory name.")
         
         #Load the desired trajectory Config
+        logging.info(f"Reading trajectory config '{trajectoryName}' ...")
         self.config = readConfig(moduleName = trajectoryName)
         
-        
-        self.myVarsList = {}
-        
+        logging.info(f"Building eightShape dictionaries ...")
+        self.eightShapePathSegments = {}
+        self.eightShapeArcs = {}
+        self.eightShapePathJointPoints = {}
+        self.eightShapePathLines = {}
     #end-def
-    
-    
-    def add2varsList(self, varsList: list=[], fname: str=""):
-        self.myVarsList[fname] = []
-        for element in varsList: self.myVarsList[fname].append(element)
-        return
-    #end-def
-    
-    def displayVarsList(self):
-        print(self.myVarsList)
-        return
-    #end-def
+
     
     def eightShape(self, delta: float=np.pi/8) -> None:
         """
@@ -44,9 +41,7 @@ class trajectory2D():
                 Parameter used to adjust (more smooth/steep) the transition between the straight lines and arcs.
                 Is used when the 'eval' function is called.
         """
-        self.eightShapePathSegments = {}
-        self.eightShapePathJointPoints = {}
-        self.eightShapePathLines = {}
+        
         
         
         self.eightShapeParams = {'c1x': self.config["c1x"],
@@ -62,6 +57,7 @@ class trajectory2D():
                                                      stop = eval(self.config["theta2_limSup"]),
                                                      step = self.config["arrayStep"])
                                 }
+        
         
         
         #-------------------------------
@@ -128,13 +124,25 @@ class trajectory2D():
         self.eightShapePathLines["X_line2"] = X_line2
         self.eightShapePathLines["Y_line2"] = Y_line2
         
+        #-------------------------------
+        #Add all the segments to a single dictionary:
+        self.eightShapePathSegments["Xarc1"] = Xarc1
+        self.eightShapePathSegments["Xarc2"] = Xarc2
+        self.eightShapePathSegments["X_line1"] = X_line1
+        self.eightShapePathSegments["Y_line1"] = Y_line1
+        self.eightShapePathSegments["X_line2"] = X_line2
+        self.eightShapePathSegments["Y_line2"] = Y_line2
         
         #-------------------------------
-        usedVarsList = ["eightShapeArcs", 
-                        "eightShapePathJointPoints", 
-                        "eightShapePathLines", 
-                        "eightShapeParams"]
-        self.add2varsList(varsList = usedVarsList, fname = "eightShape")
+        logger.info(f"eightShapeParams: \n{self.eightShapeParams}")
+        logger.info(f"Path Segment Joint Points: \n{self.eightShapePathJointPoints}")
+        logger.info(f"Path Line Segments: : {self.eightShapePathLines}")
+        
+        logger.info(f"Xarc1 (type:{type(Xarc1)}) (length:{len(Xarc1)})")
+        logger.info(f"Yarc1 (type:{type(Yarc1)}) (length:{len(Yarc1)})")
+        
+        logger.info(f"Xarc2 (type:{type(Xarc2)}) (length:{len(Xarc2)})")
+        logger.info(f"Yarc2 (type:{type(Yarc2)}) (length:{len(Yarc2)})")
         
         return
     #end-def
@@ -187,15 +195,16 @@ class trajectory2D():
         self.eightShapePathLineVectors["line2Yvector"] = line2Yvector
         
         #-------------------------------
-        usedVarsList = ["eightShapePathLineVectors"]
-        self.add2varsList(varsList = usedVarsList, fname = "fixEightShapeLineVectors")
+        logging.info(f"line1Xvector (type:{type(line1Xvector)}) (length:{len(line1Xvector)})")
+        logging.info(f"line1Yvector (type:{type(line1Yvector)}) (length:{len(line1Yvector)})")
         
-        
+        logging.info(f"line2Xvector (type:{type(line2Xvector)}) (length:{len(line2Xvector)})")
+        logging.info(f"line2Yvector (type:{type(line2Yvector)}) (length:{len(line2Yvector)})")
         return
     #end-def
     
     
-    def buildEightShapeSinglePointsVector(self) -> None:
+    def buildEightShapeTrajectory(self) -> None:
         """
             Build single Arrays of X and Y points of the Eight Shape trajectory:
             line1 -> Arc2 -> line2, Arc1
@@ -215,10 +224,11 @@ class trajectory2D():
                                                  np.flip(self.eightShapePathLineVectors["line2Yvector"]),
                                                  self.eightShapeArcs['Yarc1']))
         
-        #-------------------------------
-        usedVarsList = ["trajectoryPointsX", "trajectoryPointsY"]
-        self.add2varsList(varsList = usedVarsList, fname = "buildEightShapeSinglePointsVector")
         
+        #-------------------------------
+        logging.info(f"trajectoryPointsX (type:{type(self.trajectoryPointsX)}) (length:{len(self.trajectoryPointsX)})")
+        logging.info(f"trajectoryPointsY (type:{type(self.trajectoryPointsY)}) (length:{len(self.trajectoryPointsY)})")
+
         return
     #end-def
 #end-class
