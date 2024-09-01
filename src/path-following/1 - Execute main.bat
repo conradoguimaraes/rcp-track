@@ -1,0 +1,1 @@
+powershell.exe -ExecutionPolicy ByPass -noexit -command "& 'C:\ProgramData\anaconda3\shell\condabin\conda-hook.ps1' ; conda activate 'C:\ProgramData\anaconda3'; conda activate main; cd 'C:\Users\Podengos\Documents\GitHub\rcp-track\src\path-following'; cls; python main.py; timeout 5; exit
