@@ -36,7 +36,8 @@ plots_1:
     color: "blue"
     lineStyle: "-"
     lineWidth: 2
-
+    plotRows: 1
+    plotColumns: 2
 ---
 module_logger:
     logSubfolder: "logs"

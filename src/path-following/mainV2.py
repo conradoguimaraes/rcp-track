@@ -53,4 +53,4 @@ from envMap import envMap
 env_map = envMap()
 
 #Draw the eight shape path
-env_map.drawEightShape(pathObj)
+env_map.drawShape(pathObj)

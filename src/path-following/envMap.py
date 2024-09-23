@@ -7,6 +7,8 @@ from trajectory2D import trajectory2D
 
 
 
+import logging
+logger = logging.getLogger()
 
 class envMap():
     def __init__(self) -> None:
@@ -15,47 +17,59 @@ class envMap():
     #end-def
     
     
-    def drawEightShape(self, pathObject):        
+    def drawShape(self, pathObject, plot_style_config = "plots_1"):
+        """drawShape given a pathObject with X and Y points
+
+        Args:
+            pathObject (_type_): path object, created in trajectory2D
+            plot_style_config (str, optional): config name with plot parameters (e.g., color). Defaults to "plots_1".
+
+        Raises:
+            Exception: when path object is not a trajectory2D object
+        """        
         if (isinstance(pathObject, trajectory2D) is False): 
             raise Exception(f"{pathObject} is not a trajectory2D object.")
         #end-if-else
         
-        
+        #-------------------------------
         #Get Plot Config from file
-        config = readConfig(moduleName = "plots_1")
+        logging.info("Reading plot_style_config file '{plot_style_config}' ...")
+        plotConfig = readConfig(moduleName = plot_style_config)
+        
+        #-------------------------------
+        #Numpy arrays with the data points
+        Xdata = pathObject.trajectoryPointsX
+        Ydata = pathObject.trajectoryPointsY
+        
+        logging.info(f"Xdata datatype {type(Xdata)}")
+        logging.info(f"Ydata datatype {type(Ydata)}")
         
         
-        #Matlab implementation:
-        # plot(Xarc1,Yarc1,'-k', Xarc2,Yarc2,'-k', ...
-        #     X_reta1,Y_reta1,'-k', X_reta2,Y_reta2,'-k')
-                
-        Xdata = [pathObject.eightShapePathLines["X_line1"],
-                 pathObject.eightShapePathLines["X_line2"],
-                 pathObject.eightShapePathSegments['Xarc1'],
-                 pathObject.eightShapePathSegments['Xarc2']]
-        
-        Ydata = [pathObject.eightShapePathLines["Y_line1"],
-                 pathObject.eightShapePathLines["Y_line2"],
-                 pathObject.eightShapePathSegments['Yarc1'],
-                 pathObject.eightShapePathSegments['Yarc2']]
-        
-        print(config["color"])
-        
-        plotRows, plotColumns = 1, 2
+        #-------------------------------
+        logging.info("Building subplots ...")
+        plotRows, plotColumns = plotConfig["plotRows"], plotConfig["plotColumns"]
         self.fig1, (self.ax1, self.ax2) = plt.subplots(nrows=plotRows, ncols=plotColumns,
                                                        gridspec_kw={'width_ratios':[2,1]})
-        for X, Y in zip(Xdata, Ydata):
-            self.ax1.plot(X, Y,
-                          color=config["color"],
-                          ls=config["lineStyle"],
-                          linewidth=config["lineWidth"])
-        #end-for
+   
+        self.ax1.plot(Xdata, Ydata,
+                      color=plotConfig["color"],
+                      ls=plotConfig["lineStyle"],
+                      linewidth=plotConfig["lineWidth"])
         
         self.ax1.grid()
         self.ax2.grid()
         
-        plt.savefig("figure.png")
+        #-------------------------------
+        logging.info("Maximizing plot window ...")
+        manager = plt.get_current_fig_manager()
+        #manager.full_screen_toggle()
+        manager.window.showMaximized()
+        
         plt.show()
+        #-------------------------------
+        logging.info("Saving plot figure ...")
+        plt.savefig("drawShape_figure.png")
+        #-------------------------------
     #end-def
     
     

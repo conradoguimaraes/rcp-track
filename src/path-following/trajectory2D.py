@@ -250,8 +250,19 @@ if __name__ == "__main__":
     #from trajectory2D import trajectory2D
 
     #Init the Path Object with the desired trajectory config/parameters
-    path = trajectory2D(trajectoryName = "trajectory_eightshape_v1")
+    pathObj = trajectory2D(trajectoryName = "trajectory_eightshape_v1")
 
     #Build the Path segments
-    path.eightShape(delta = np.pi/8)
+    pathObj.eightShape(delta = np.pi/8)
+    
+
+    #Fix the straight lines:
+    pathObj.fixEightShapeLineVectors()
+
+    #Build the trajectory
+    pathObj.buildEightShapeTrajectory()
+
+    #Now the Xdata and Ydata are available:
+    Xdata = pathObj.trajectoryPointsX
+    Ydata = pathObj.trajectoryPointsY
 #end-if-else
