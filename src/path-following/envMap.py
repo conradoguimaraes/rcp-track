@@ -54,7 +54,7 @@ class envMap():
         self.ax1.grid()
         self.ax2.grid()
         
-        plt.savefig("")
+        plt.savefig("figure.png")
         plt.show()
     #end-def
     

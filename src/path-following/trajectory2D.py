@@ -127,7 +127,10 @@ class trajectory2D():
         #-------------------------------
         #Add all the segments to a single dictionary:
         self.eightShapePathSegments["Xarc1"] = Xarc1
+        self.eightShapePathSegments["Yarc1"] = Yarc1
         self.eightShapePathSegments["Xarc2"] = Xarc2
+        self.eightShapePathSegments["Yarc2"] = Yarc2
+        
         self.eightShapePathSegments["X_line1"] = X_line1
         self.eightShapePathSegments["Y_line1"] = Y_line1
         self.eightShapePathSegments["X_line2"] = X_line2
@@ -137,6 +140,12 @@ class trajectory2D():
         logger.info(f"eightShapeParams: \n{self.eightShapeParams}")
         logger.info(f"Path Segment Joint Points: \n{self.eightShapePathJointPoints}")
         logger.info(f"Path Line Segments: : {self.eightShapePathLines}")
+        
+        theta1length = len(self.eightShapeParams["theta1"])
+        theta2length = len(self.eightShapeParams["theta2"])
+        logger.info(f"theta1 length: {theta1length}")
+        logger.info(f"theta2 length: {theta2length}")
+        
         
         logger.info(f"Xarc1 (type:{type(Xarc1)}) (length:{len(Xarc1)})")
         logger.info(f"Yarc1 (type:{type(Yarc1)}) (length:{len(Yarc1)})")
