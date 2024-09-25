@@ -17,7 +17,7 @@ class envMap():
     #end-def
     
     
-    def drawShape(self, pathObject, plot_style_config = "plots_1"):
+    def drawShape(self, pathObject, plot_style_config = "plots_1", blockPlot = False):
         """drawShape given a pathObject with X and Y points
 
         Args:
@@ -61,18 +61,44 @@ class envMap():
         
         #-------------------------------
         logging.info("Maximizing plot window ...")
-        manager = plt.get_current_fig_manager()
+        #manager = plt.get_current_fig_manager()
         #manager.full_screen_toggle()
-        manager.window.showMaximized()
-        
-        plt.show()
+        #manager.window.showMaximized()
+        #figHandler = plt.gcf()
+        #figHandler.show()
+        plt.show(block = blockPlot)
         #-------------------------------
-        logging.info("Saving plot figure ...")
-        plt.savefig("drawShape_figure.png")
+        #logging.info("Saving plot figure ...")
+        #self.plt.savefig("drawShape_figure.png")
         #-------------------------------
     #end-def
     
-    
+    def add_data_to_plot(self, new_Xdata, new_Ydata, plot_style_config="plots_1", plotPoint = False, pause_time=0.1):
+        #Add new data points to the left subplot (self.ax1) in real-time
+        if self.ax1 is None: raise Exception("The plot has not been initialized. Call drawShape first.")
+        
+        # Get Plot Config from file (if needed)
+        #logging.info(f"Reading plot_style_config file '{plot_style_config}' ...")
+        #plotConfig = readConfig(moduleName=plot_style_config)
+
+        # Plot new data points
+        if (plotPoint):
+            self.ax1.plot(new_Xdata, new_Ydata,
+                        color="red",
+                        marker='o',
+                        ls='None',  # No line, since it's a single point (or points)
+                        linewidth=2)
+        else:  
+            self.ax1.plot(new_Xdata, new_Ydata,
+                          color="red",  # Default color if not specified
+                          ls=":",    # Default line style
+                          linewidth=2)  # Default line width
+        #end-if-else
+        
+        # Redraw the plot and pause to allow real-time updates
+        plt.draw()
+        plt.pause(pause_time)  # Pause to update the plot in real-time
+    #end-def
     
     def showTestPlot(self):
         X = np.linspace(0, 2*np.pi, 100)

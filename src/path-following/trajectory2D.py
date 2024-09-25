@@ -240,6 +240,13 @@ class trajectory2D():
 
         return
     #end-def
+    
+    
+    def buildHorizontalLine(self, x0, x1, y0, nr_points) -> None:
+        self.trajectoryPointsX = np.linspace(x0, x1, nr_points) #start, stop, nr_points
+        self.trajectoryPointsY = np.ones_like(self.trajectoryPointsX) * y0
+        return
+    #end-def
 #end-class
 
 
