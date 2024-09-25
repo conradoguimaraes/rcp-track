@@ -7,7 +7,7 @@ import pickle
 
 ################ FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS #############################
 
-chessboardSize = (9,6)
+chessboardSize = (6,6)
 frameSize = (640,480)
 
 
