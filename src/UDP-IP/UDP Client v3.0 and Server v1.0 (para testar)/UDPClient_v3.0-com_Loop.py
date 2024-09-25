@@ -102,9 +102,11 @@ while True:
         if (fileName.lower() == "clear"):
             funclear()
         elif (fileName.lower() == "showip"):
-            showIP()
+            showIP(enderecoIP)
         elif (fileName.lower() == "showport"):
-            showPort()
+            showPort(port)
+        elif (fileName.lower() == "changeip"):
+            enderecoIP = input(">> IP: ")
         elif (fileName.lower() == "stop" or fileName.lower() == "exit"):
             break
 
@@ -126,13 +128,14 @@ while True:
             #end-if-else
             
             
-            
+            sendMessage(FileData)
+            """
             R = input("> Press any key to send the message...")
             if R.lower() == "stop":
                 pass
             else:
                 sendMessage(FileData)
-
+            """
 
     except:
         print(traceback.format_exc())

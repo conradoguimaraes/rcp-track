@@ -21,9 +21,11 @@ import socket
 #-----------------------------------------------------------------------------
 #Connection Parameters:
 #localIP = "127.0.0.1"
-localIP = "192.168.137.118"
+#localIP = "192.168.137.118"
+localIP = "192.168.1.67" #endereço deste computador ipv4
+#port = 54321
+#port = 8080
 port = 54321
-port = 8080
 bufferSize = 1024
 #-----------------------------------------------------------------------------
 print("IP:" , localIP)
@@ -53,14 +55,17 @@ while(True):
     address = bytesAddressPair[1] #tuple (address, port)
     
     #-------------------------------------------------------------------------        
-    #clientMsg = "\t> Message Received from Client:{}".format(message)
+    clientMsg = "\t> Message Received from Client:{}".format(message)
+    
     clientMsg = "\t> Message Received from Client: " + message.decode("utf-8")
     clientIP  = "\t> Client IP Address:{}".format(address)
     
     print(clientMsg)
     print(clientIP)
     print("\n")
+    
     #-------------------------------------------------------------------------
    
-    # Sending a REPLY to client
-    UDPServerSocket.sendto(bytesToSend, address)
+    #Send a REPLY to the Client
+    #UDPServerSocket.sendto(bytesToSend, address)
+#end-def
