@@ -58,6 +58,8 @@ class carModel:
         self.c = self.c_max;
         self.c_min = -(self.c_max);
         
+        
+        self.curvature = 0 #given by 1/R1 or 1/R2 according to type of path segment
         #-----------------------------
         #PID:
         #u = (Kp*e) + error_i+(Ki*e*dt) + Kd*(e-e_previous)/dt
@@ -125,7 +127,7 @@ class carModel:
     #end-def
     
     
-    def PID(self, error, dt):
+    def PID(self, error, dt, curvature):
         #error is the crosstrack_error
         
         logging.info("Running PID ...")
@@ -136,7 +138,7 @@ class carModel:
         
         self.error_previous = error
         
-        self.c = self.Kp*error + self.Ki*self.error_i + self.Kd*self.error_d;
+        self.c = (self.Kp*error + self.Ki*self.error_i + self.Kd*self.error_d) + self.curvature;
         
         logging.info(f"error_p = {self.error_p}")
         logging.info(f"error_i = {self.error_i}")

@@ -117,7 +117,7 @@ for t in range(0, T, timestep): #start/stop/step
     
     d = computeEuclidianDistance(x0,y0,x1,y1)
     
-    car.PID(error = d, dt = timestep)
+    car.PID(error = d, dt = timestep, curvature=0)
     car.update(dt = timestep)
     
     
