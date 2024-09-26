@@ -105,8 +105,9 @@ class envMap():
         else:  
             self.ax1.plot(new_Xdata, new_Ydata,
                           color="red",  # Default color if not specified
+                          marker=".",
                           ls=":",    # Default line style
-                          linewidth=2)  # Default line width
+                          linewidth=1)  # Default line width
         #end-if-else
         
         # Redraw the plot and pause to allow real-time updates

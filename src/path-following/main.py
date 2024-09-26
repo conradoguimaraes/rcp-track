@@ -137,13 +137,16 @@ while t <= simTime:
         #Update Car Kinematics
         car.update(dt = timestep)
         
+        #Update Loop variables
+        t += timestep
+        arrayIndex += 1
+        
         #Plot new Car position
         env_map.add_data_to_plot(car.xArray, car.yArray,
                                  pause_time = 0.025,
                                  plot_Suffix_title = " t = " + "{:.2f}".format(t))
         
-        t += timestep
-        arrayIndex += 1
+        
         time.sleep(0.025)
         
     except KeyboardInterrupt:
