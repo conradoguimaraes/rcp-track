@@ -6,30 +6,46 @@ Created on Sun Sep  1 23:24:40 2024
 """
 
 #%%
+#Required Imports
 import os
+import time
 import logging
+import numpy as np
+import traceback
 
-if (os.path.isdir("logs") is False): os.mkdir("logs")
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s][%(levelname)s][%(threadName)s][%(module)s][%(funcName)s][line %(lineno)d] %(message)s',
-    handlers=[
-        logging.FileHandler("logs/logs.log", mode='w+'),
-        logging.StreamHandler()
-    ]
-)
+from config import readConfig
+from trajectory2D import trajectory2D
+from envMap import envMap
+from carModel import carModel
 
 
+import utils.trajectoryFunctions as tf
+from utils.logInit import initLogger
 
-logger = logging.getLogger()
 
-logger.info("Logger created!")
 
 #%%
+#Initialize the Logger
+initLogger()
 
-import numpy as np
-from trajectory2D import trajectory2D
+
+
+#%%
+#Required Simulation inputs: 
+config = readConfig(moduleName=__file__)
+
+#simTime = 60
+#timestep = 0.1
+logging.info(f"Reading config '{__file__}'")
+simTime = config["simTime"]
+timestep = config["timestep"]
+
+logging.info(f"simTime = {simTime}")
+logging.info(f"timestep = {timestep}")
+
+
+#%%
+#Initialize the Path/Trajectory Object
 
 #Init the Path Object with the desired trajectory config/parameters
 #logger.info(f"Creating a path object with trajectory config '{desiredTrajectory}' ...")
@@ -45,11 +61,14 @@ pathObj.fixEightShapeLineVectors()
 pathObj.buildEightShapeTrajectory()
 
 
-#_:_:_:_:_:_:_:_ forcing an horizontal line (for tests)
-simTime = 60
-timestep = 0.1
+#Horizontal:
+# forcing an horizontal line (for tests)
+
 number_points = len(np.arange(0, simTime+timestep, timestep))
-pathObj.buildHorizontalLine(x0=0, x1=50, y0=0, nr_points=number_points)
+
+line_x0, line_y0 = 0, 0
+line_x1, line_y1 = 50, 0
+pathObj.buildHorizontalLine(x0=line_x0, x1=line_x1, y0=line_y0, nr_points=number_points)
 
 
 logging.info(f"Simulation Time: simTime={simTime}.")
@@ -60,50 +79,6 @@ logging.info(f"Building StraightLine with {number_points} points.")
 
 
 #%%
-
-from envMap import envMap
-
-#Create the environment map object
-env_map = envMap()
-
-#Draw the eight shape path
-env_map.drawShape(pathObj, blockPlot=False, maximized=False)
-
-
-
-
-"""
-# Now, you can add random XY points in the future like this:
-import numpy as np
-
-# Simulate adding new data over time
-for i in range(50):
-    # Generate new random XY points
-    new_Xdata = np.random.rand(10)
-    new_Ydata = np.random.rand(10)
-
-    # Add the new data to the plot in real-time
-    env_map.add_data_to_plot(new_Xdata, new_Ydata, pause_time=0.1)
-
-    # Simulate a delay for data generation (optional)
-    time.sleep(0.5)
-#end-for
-"""
-
-#%%
-import time
-from carModel import carModel
-from utils.trajectoryFunctions import *
-import traceback
-
-#T = 100 #Simulation time
-#timestep = 0.1 #Timestep
-
-
-#T = len(pathObj.trajectoryPointsX)
-
-
-
 #Initialize the car object
 car = carModel(x0 = 0, y0 = 0.1, v0 = 1.0,
                radius1  = 10,
@@ -114,11 +89,27 @@ car.Kd = 0.7
 
 
 
+#%%
+#Create the environment map object
+env_map = envMap()
+
+#Draw the eight shape path
+title = f"simTime={simTime} | Kp={car.Kp} | Kp={car.Ki} | Kp={car.Kd}"
+env_map.drawShape(pathObj, titleStr=title, blockPlot=False, maximized=True)
 
 
-arrayIndex = 0
-#for t in range(0, T, timestep): #start/stop/step
-t = 0
+
+
+
+
+
+
+#%%
+#Run the simulation:
+
+arrayIndex = 0 #integer index counter to iterate along XY point arrays
+t = 0.0 #float step counter (tk = t(k-1) + h, etc) (ex with h=0.1: t=[0.0, 0.1, 0.2, ...])
+
 while t <= simTime:
     #getStateOfCar() / localizar
     #compute dist_arco or dist_reta ang obtain cross track error
@@ -128,19 +119,28 @@ while t <= simTime:
         x1 = pathObj.trajectoryPointsX[arrayIndex]
         y1 = pathObj.trajectoryPointsY[arrayIndex]
         
-        d = computeEuclidianDistance(x0,y0,x1,y1)
-        if (y1 < car.y):
-            d = d*(-1)
-        else:
-            pass
-        #end-if-else
-        logging.info(f"Distance = {d}")
+        d, lambda1, lambda2, theta, Q = tf.distance2line(line_x0, line_y0,
+                                                         line_x1, line_y1,
+                                                         car.x, car.y)
         
-        car.PID(error = d, dt = timestep, curvature=0)
+        logging.info(f"Distance = {d}")
+        logging.info(f"lambda-1 = {lambda1} | lambda-2 = {lambda2}")
+        logging.info(f"Theta = {theta}")
+        logging.info(f"Nearest Point on Track Q={Q}")
+        
+        if(lambda2 <= 0): d = d*(-1);
+        curvature_value = 0
+        
+        #Compute PID
+        car.PID(error = d, dt = timestep, curvature = curvature_value)
+        
+        #Update Car Kinematics
         car.update(dt = timestep)
         
-        
-        env_map.add_data_to_plot(car.xArray, car.yArray, pause_time=0.025)
+        #Plot new Car position
+        env_map.add_data_to_plot(car.xArray, car.yArray,
+                                 pause_time = 0.025,
+                                 plot_Suffix_title = " t = " + "{:.2f}".format(t))
         
         t += timestep
         arrayIndex += 1
@@ -152,3 +152,8 @@ while t <= simTime:
         logging.info(traceback.format_exc())
     #end-try-except
 #end-for
+
+logging.info("Saving plot snapshot ...")
+env_map.savePlot(figureName="myresult.png")
+
+input("________end of program________>")

@@ -16,7 +16,7 @@ class envMap():
     #end-def
     
     
-    def drawShape(self, pathObject, plot_style_config = "plots_1", blockPlot = False, maximized=False, saveSnapshot=False):
+    def drawShape(self, pathObject, titleStr="", plot_style_config = "plots_1", blockPlot = False, maximized=False, saveSnapshot=False):
         """drawShape given a pathObject with X and Y points
 
         Args:
@@ -58,6 +58,9 @@ class envMap():
         self.ax1.grid()
         self.ax2.grid()
         
+        
+        self.fig1.suptitle(titleStr)
+        
         #-------------------------------
         if (maximized):
             logging.info("Maximizing plot window ...")
@@ -67,6 +70,10 @@ class envMap():
         #end-try-except
         
         plt.show(block = blockPlot)
+        #-------------------------------
+        #self.fig1.set_title(titleStr, loc="center")
+        #self.ax1.xlabel("x")
+        #self.ax1.ylabel("y")
         #-------------------------------
         if (saveSnapshot):
             #add results folder
@@ -80,7 +87,7 @@ class envMap():
         #-------------------------------
     #end-def
     
-    def add_data_to_plot(self, new_Xdata, new_Ydata, plot_style_config="plots_1", plotPoint = False, pause_time=0.1):
+    def add_data_to_plot(self, new_Xdata, new_Ydata, plot_style_config="plots_1", plotPoint = False, pause_time=0.1, plot_Suffix_title = ""):
         #Add new data points to the left subplot (self.ax1) in real-time
         if self.ax1 is None: raise Exception("The plot has not been initialized. Call drawShape first.")
         
@@ -103,9 +110,17 @@ class envMap():
         #end-if-else
         
         # Redraw the plot and pause to allow real-time updates
+        self.fig1.canvas.set_window_title('Plot' + plot_Suffix_title)
         plt.draw()
         plt.pause(pause_time)  # Pause to update the plot in real-time
+        
     #end-def
+    
+    
+    def savePlot(self, figureName = "output.png"):
+        plt.savefig(figureName)
+    #end-def
+    
     
     def showTestPlot(self):
         X = np.linspace(0, 2*np.pi, 100)

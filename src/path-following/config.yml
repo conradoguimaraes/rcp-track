@@ -1,15 +1,7 @@
----
-carModel_1:
-    x0: 0
-    y0: 0
-    
-    v: 1
-    theta0: 0
+main.py:
+    simTime: 40
+    timestep: 0.1
 
-    radiusR1: 10
-    radiusR2: 10
-
-    startCrossTrackError: 0
 ---
 trajectory_eightshape_v1:
     c1x: 10
@@ -18,9 +10,7 @@ trajectory_eightshape_v1:
     c2y: 15
     R1: 10
     R2: 10
-    
-
-    #delta: "3.14/8" #adjust joint between Arc and Line Segments
+        #delta: "3.14/8" #adjust joint between Arc and Line Segments
     
     arrayStep: 0.0001
     theta1_limInf: "(3.14/2 - delta)" #Matlab: theta1 = (pi/2 - delta) : 0.0001 : ((3*pi)/2 + delta);
@@ -38,9 +28,4 @@ plots_1:
     lineWidth: 2
     plotRows: 1
     plotColumns: 2
----
-module_logger:
-    logSubfolder: "logs"
-    logFilename: "logs.log"
-    logFormat: "[%(asctime)s][%(levelname)s][%(threadName)s][%(module)s][Line %(lineno)d] %(message)s"
 ...
