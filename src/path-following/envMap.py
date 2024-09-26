@@ -13,11 +13,10 @@ logger = logging.getLogger()
 class envMap():
     def __init__(self) -> None:
         self.config = readConfig(moduleName="environmentMap")
-        
     #end-def
     
     
-    def drawShape(self, pathObject, plot_style_config = "plots_1", blockPlot = False):
+    def drawShape(self, pathObject, plot_style_config = "plots_1", blockPlot = False, maximized=False, saveSnapshot=False):
         """drawShape given a pathObject with X and Y points
 
         Args:
@@ -60,16 +59,24 @@ class envMap():
         self.ax2.grid()
         
         #-------------------------------
-        logging.info("Maximizing plot window ...")
-        #manager = plt.get_current_fig_manager()
-        #manager.full_screen_toggle()
-        #manager.window.showMaximized()
-        #figHandler = plt.gcf()
-        #figHandler.show()
+        if (maximized):
+            logging.info("Maximizing plot window ...")
+            manager = plt.get_current_fig_manager()
+            #manager.full_screen_toggle()
+            manager.window.showMaximized()
+        #end-try-except
+        
         plt.show(block = blockPlot)
         #-------------------------------
-        #logging.info("Saving plot figure ...")
-        #self.plt.savefig("drawShape_figure.png")
+        if (saveSnapshot):
+            #add results folder
+            #add plot counter
+            #add plot default name
+            
+            #logging.info("Saving plot figure ...")
+            #self.plt.savefig("drawShape_figure.png")
+            pass            
+        #end-if-else
         #-------------------------------
     #end-def
     

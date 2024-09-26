@@ -46,7 +46,17 @@ pathObj.buildEightShapeTrajectory()
 
 
 #_:_:_:_:_:_:_:_ forcing an horizontal line (for tests)
-pathObj.buildHorizontalLine(x0=0, x1=50, y0=0, nr_points=10000)
+simTime = 60
+timestep = 0.1
+number_points = len(np.arange(0, simTime+timestep, timestep))
+pathObj.buildHorizontalLine(x0=0, x1=50, y0=0, nr_points=number_points)
+
+
+logging.info(f"Simulation Time: simTime={simTime}.")
+logging.info(f"Timestep: timestep={timestep}.")
+logging.info(f"Building StraightLine with {number_points} points.")
+
+
 
 
 #%%
@@ -57,7 +67,7 @@ from envMap import envMap
 env_map = envMap()
 
 #Draw the eight shape path
-env_map.drawShape(pathObj, blockPlot=False)
+env_map.drawShape(pathObj, blockPlot=False, maximized=False)
 
 
 
@@ -83,45 +93,62 @@ for i in range(50):
 #%%
 import time
 from carModel import carModel
+from utils.trajectoryFunctions import *
+import traceback
+
+#T = 100 #Simulation time
+#timestep = 0.1 #Timestep
 
 
-T = 100 #Simulation time
-timestep = 0.1 #Timestep
+#T = len(pathObj.trajectoryPointsX)
 
-
-T = len(pathObj.trajectoryPointsX)
-timestep = 1
 
 
 #Initialize the car object
-car = carModel(x0 = 0, y0 = 2, v0 = 1.0,
-               radius1  = 4,
-               radius2 = 4)
-car.Kp = 0.1
-car.Ki = 0
-car.Kd = 0.2
+car = carModel(x0 = 0, y0 = 0.1, v0 = 1.0,
+               radius1  = 10,
+               radius2 = 10)
+car.Kp = 0.6
+car.Ki = 0.11
+car.Kd = 0.7
 
 
-def computeEuclidianDistance(x0,y0,x1,y1):
-    return ((x0-x1)**2 + (y0-y1)**2)**0.5
-#end-def
 
-for t in range(0, T, timestep): #start/stop/step
+
+
+arrayIndex = 0
+#for t in range(0, T, timestep): #start/stop/step
+t = 0
+while t <= simTime:
     #getStateOfCar() / localizar
     #compute dist_arco or dist_reta ang obtain cross track error
-    
-    x0 = car.x
-    y0 = car.y
-    x1 = pathObj.trajectoryPointsX[t]
-    y1 = pathObj.trajectoryPointsX[t]
-    
-    d = computeEuclidianDistance(x0,y0,x1,y1)
-    
-    car.PID(error = d, dt = timestep, curvature=0)
-    car.update(dt = timestep)
-    
-    
-    env_map.add_data_to_plot(car.xArray, car.yArray, pause_time=0.1)
-    time.sleep(0.1)
-    pass
+    try:
+        x0 = car.x
+        y0 = car.y
+        x1 = pathObj.trajectoryPointsX[arrayIndex]
+        y1 = pathObj.trajectoryPointsY[arrayIndex]
+        
+        d = computeEuclidianDistance(x0,y0,x1,y1)
+        if (y1 < car.y):
+            d = d*(-1)
+        else:
+            pass
+        #end-if-else
+        logging.info(f"Distance = {d}")
+        
+        car.PID(error = d, dt = timestep, curvature=0)
+        car.update(dt = timestep)
+        
+        
+        env_map.add_data_to_plot(car.xArray, car.yArray, pause_time=0.025)
+        
+        t += timestep
+        arrayIndex += 1
+        time.sleep(0.025)
+        
+    except KeyboardInterrupt:
+        break
+    except:
+        logging.info(traceback.format_exc())
+    #end-try-except
 #end-for
