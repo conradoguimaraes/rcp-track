@@ -93,7 +93,7 @@ car.Kd = 0.7
 env_map = envMap()
 
 #Draw the eight shape path
-title = f"simTime={simTime} | Kp={car.Kp} | Kp={car.Ki} | Kp={car.Kd}"
+title = f"simTime={simTime} | Kp={car.Kp} | Ki={car.Ki} | Kd={car.Kd}"
 env_map.drawShape(pathObj, titleStr=title, blockPlot=False, maximized=True)
 
 
@@ -108,6 +108,7 @@ env_map.drawShape(pathObj, titleStr=title, blockPlot=False, maximized=True)
 
 arrayIndex = 0 #integer index counter to iterate along XY point arrays
 t = 0.0 #float step counter (tk = t(k-1) + h, etc) (ex with h=0.1: t=[0.0, 0.1, 0.2, ...])
+t_array = np.array([])
 
 while t <= simTime:
     #getStateOfCar() / localizar
@@ -138,15 +139,28 @@ while t <= simTime:
         
         #Update Loop variables
         t += timestep
+        t_array = np.append(t_array, t)
         arrayIndex += 1
         
         #Plot new Car position
-        env_map.add_data_to_plot(env_map.fig1, env_map.ax2,
+        env_map.add_data_to_plot(env_map.fig1, env_map.ax1,
                                  car.xArray, car.yArray,
                                  pause_time = 0.025,
                                  plot_Suffix_title = " t = " + "{:.2f}".format(t))
         
         
+        #Plot cross-track error
+        # env_map.add_data_to_plot(env_map.fig1, env_map.ax2,
+        #                          len(car.errorArray), car.error_abs,
+        #                          pause_time = 0.025,
+        #                          plotPoint = False,
+        #                          plot_Suffix_title = " t = " + "{:.2f}".format(t))
+        
+        env_map.add_data_to_plot(env_map.fig1, env_map.ax2,
+                                 t_array, car.errorArrayAbs,
+                                 pause_time = 0.025,
+                                 plotSinglePoint = False,
+                                 plot_Suffix_title = " t = " + "{:.2f}".format(t))
         time.sleep(0.025)
         
     except KeyboardInterrupt:
@@ -154,9 +168,19 @@ while t <= simTime:
     except:
         logging.info(traceback.format_exc())
     #end-try-except
+    
+    logging.info(f"End of iteration #{arrayIndex} (t = {t})")
 #end-for
+
+
+logging.info("Simulation ended!")
+logging.info(f"Total Cross-track error: {car.total_error}")
+logging.info(f"Total Absolute Cross-track error: {np.sum(car.errorArrayAbs)}")
+logging.info(f"Total Control Effort: {car.computeControlEffort()}")
+
 
 logging.info("Saving plot snapshot ...")
 env_map.savePlot(figureName="myresult.png")
+
 
 input("________end of program________>")

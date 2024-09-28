@@ -69,7 +69,8 @@ class carModel:
         self.Kd = 27.3
 
         
-        #self.error = 0
+        self.error = 0
+        self.error_abs = 0
         self.error_previous = 0
         
         self.error_p = 0
@@ -79,7 +80,11 @@ class carModel:
         #-----------------------------
         #Metrics
         self.total_error = 0
+        self.errorArray = np.array([])
+        self.errorArrayAbs = np.array([])
+        
         self.control_effort = 0
+        self.controlEffort_array = np.array([])
     #end-def
     
     
@@ -129,26 +134,50 @@ class carModel:
     
     def PID(self, error, dt, curvature):
         #error is the crosstrack_error
-        
         logging.info("Running PID ...")
+        
+        self.error = error
+        self.error_abs = abs(error)
+        logging.info(f"cross track error = {self.error}")
+        
+        #Compute Errors:
+        self.error_p = error
         self.error_i = self.error_i + (error * dt)
         self.error_d = (error - self.error_previous) / dt
-        self.error_p = error
-        
-        
-        self.error_previous = error
-        
-        self.c = (self.Kp*error + self.Ki*self.error_i + self.Kd*self.error_d) + self.curvature;
         
         logging.info(f"error_p = {self.error_p}")
         logging.info(f"error_i = {self.error_i}")
         logging.info(f"error_d = {self.error_d}")
         
-        logging.info(f"cross track error = {error}")
+        #Compute control:
+        self.c = (self.Kp*error + self.Ki*self.error_i + self.Kd*self.error_d) + self.curvature;
+        logging.info(f"computed control c = {self.c}")
         
-        logging.info(f"computed control c = {self.c}") 
+        #Save error, and append errors and control effort to arrays:
+        self.error_previous = self.error #save current error to be used on next iteration
+        
+        self.total_error += self.error #total accumulated error
+        self.errorArray = np.append(self.errorArray, self.error) #error on each iteration
+        self.errorArrayAbs = np.append(self.errorArrayAbs, self.error_abs)
+        
+        self.controlEffort_array = np.append(self.controlEffort_array, self.c) #control effort on each iteration
+                
+        logging.info(f"Current Total Sum of cross track error = {self.total_error}")
     #end-def
+    
+    def computeControlEffort(self) -> float:
+        #Control Effort computed as U = (u0)^2 + (u1)^2 + ... + (uk)^2
+        logging.info("Computing total control effort 'U = (u0)^2 + (u1)^2 + ... + (uk)^2'")
         
+        #Square each element of the array:
+        arraySquared = self.controlEffort_array**2
+        
+        #Sum:
+        self.control_effort = np.sum(arraySquared)
+        
+        logging.info(f"Total control effort U = {self.control_effort}")
+        return self.control_effort
+    #end-def
 
 #end-class
 

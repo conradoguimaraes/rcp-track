@@ -87,7 +87,7 @@ class envMap():
         #-------------------------------
     #end-def
     
-    def add_data_to_plot(self, figure, axis, new_Xdata, new_Ydata, plot_style_config="plots_1", plotPoint = False, pause_time=0.1, plot_Suffix_title = ""):
+    def add_data_to_plot(self, figure, axis, new_Xdata, new_Ydata, plot_style_config="plots_1", plotSinglePoint = True, pause_time=0.1, plot_Suffix_title = ""):
         """Receives a figure, axis, X and Y data to be added, plus plot config parameters.
 
         Args:
@@ -96,7 +96,7 @@ class envMap():
             new_Xdata : X data
             new_Ydata : Y data
             plot_style_config (str, optional): Plotstyle config in the config.yml. Defaults to "plots_1".
-            plotPoint (bool, optional): xxxxx not being used - consider removal on refactor. Defaults to False.
+            plotSinglePoint (bool, optional): Plot Single Point or Entire Array - change in the marker settings. Defaults to False.
             pause_time (float): Delay to add data to plot (create effect of points appearing). Defaults to 0.1.
             plot_Suffix_title (str): Used to add a new name to the figure window. Defaults to "".
 
@@ -113,17 +113,18 @@ class envMap():
         #plotConfig = readConfig(moduleName=plot_style_config)
 
         # Plot new data points
-        if (plotPoint):
+        if (plotSinglePoint):
             axis.plot(new_Xdata, new_Ydata,
                       color="red",
-                      marker='o',
-                      ls='None',  # No line, since it's a single point (or points)
-                      linewidth=2)
+                      marker='.',
+                      markersize=5,
+                      ls=':',  # No line, since it's a single point (or points)
+                      linewidth=1)
         else:  
             axis.plot(new_Xdata, new_Ydata,
                       color="red",  # Default color if not specified
-                      marker=".",
-                      ls=":",    # Default line style
+                      marker='',
+                      ls="-",    # Default line style
                       linewidth=1)  # Default line width
         #end-if-else
         
