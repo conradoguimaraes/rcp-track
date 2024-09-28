@@ -67,9 +67,8 @@ pathObj.buildEightShapeTrajectory()
 number_points = len(np.arange(0, simTime+timestep, timestep))
 
 line_x0, line_y0 = 0, 0
-line_x1, line_y1 = 50, 0
-pathObj.buildHorizontalLine(x0=line_x0, x1=line_x1, y0=line_y0, nr_points=number_points)
-
+line_x1, line_y1 = 50, 2
+pathObj.buildStraightLine(x0=line_x0, y0=line_y0, x1=line_x1, y1=line_y1, nr_points=number_points)
 
 logging.info(f"Simulation Time: simTime={simTime}.")
 logging.info(f"Timestep: timestep={timestep}.")

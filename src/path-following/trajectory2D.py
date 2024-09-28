@@ -242,17 +242,40 @@ class trajectory2D():
     #end-def
     
     
-    def buildHorizontalLine(self, x0, x1, y0, nr_points) -> None:
+    def buildStraightLine(self, x0:float, y0:float, x1:float, y1:float, nr_points:int) -> None:
+        """Function to build a straight line.
+
+        Args:
+            x0 (float): line starting X coordinate
+            y0 (float): line starting Y coordinate
+            x1 (float): line ending X coordinate
+            y1 (float): line ending Y coordinate
+            nr_points (int): array number of points
+        """
         self.trajectoryPointsX = np.linspace(x0, x1, nr_points) #start, stop, nr_points
-        self.trajectoryPointsY = np.ones_like(self.trajectoryPointsX) * y0
+        self.trajectoryPointsY = np.linspace(y0, y1, nr_points)
         return
     #end-def
     
-    def buildArc(self, cx, cy, radius, delta, nr_points, arcOrientation, arcRotation:float=0.0) -> None:
-        if (arcOrientation == "left"):
+    def buildArc(self, cx:float, cy:float, radius:float, delta:float, nr_points:int, arcOrientation:str, arcRotation:float=0.0) -> None:
+        """Function to build an arc.
+        Args:
+            cx (float): Arc Center X coordinate
+            cy (float): Arc Center Y coordinate
+            radius (float): Arc radius
+            delta (float): Arc endpoint angle adjustment
+            nr_points (int): Array number of points
+            arcOrientation (str): Arc oriented "left" or "right"
+            arcRotation (float, defaults to 0.0): Additional Arc orientation rotation, in radians.
+
+        Raises:
+            Exception: when given an incorrect Arc Orientation ('left', 'right')
+        """
+        
+        if (arcOrientation.lower() == "left"):
             theta_inf = (np.pi/2) - delta
             theta_sup = ((3*np.pi)/2) + delta
-        elif (arcOrientation == "right"):
+        elif (arcOrientation.lower() == "right"):
             theta_inf = -((np.pi/2) + delta)
             theta_sup = (np.pi/2 + delta)
         else:
