@@ -26,7 +26,7 @@ class envMap():
         Raises:
             Exception: when path object is not a trajectory2D object
         """        
-        if (isinstance(pathObject, trajectory2D) is False): 
+        if (isinstance(pathObject, trajectory2D) is False):
             raise Exception(f"{pathObject} is not a trajectory2D object.")
         #end-if-else
         
@@ -87,9 +87,26 @@ class envMap():
         #-------------------------------
     #end-def
     
-    def add_data_to_plot(self, new_Xdata, new_Ydata, plot_style_config="plots_1", plotPoint = False, pause_time=0.1, plot_Suffix_title = ""):
+    def add_data_to_plot(self, figure, axis, new_Xdata, new_Ydata, plot_style_config="plots_1", plotPoint = False, pause_time=0.1, plot_Suffix_title = ""):
+        """Receives a figure, axis, X and Y data to be added, plus plot config parameters.
+
+        Args:
+            figure : figure handler
+            axis : axis handler
+            new_Xdata : X data
+            new_Ydata : Y data
+            plot_style_config (str, optional): Plotstyle config in the config.yml. Defaults to "plots_1".
+            plotPoint (bool, optional): xxxxx not being used - consider removal on refactor. Defaults to False.
+            pause_time (float): Delay to add data to plot (create effect of points appearing). Defaults to 0.1.
+            plot_Suffix_title (str): Used to add a new name to the figure window. Defaults to "".
+
+        Raises:
+            Exception: when figure or axis are None.
+        """
+        
+        
         #Add new data points to the left subplot (self.ax1) in real-time
-        if self.ax1 is None: raise Exception("The plot has not been initialized. Call drawShape first.")
+        if (figure is None or axis is None): raise Exception("The plot has not been initialized. Call drawShape first.")
         
         # Get Plot Config from file (if needed)
         #logging.info(f"Reading plot_style_config file '{plot_style_config}' ...")
@@ -97,21 +114,21 @@ class envMap():
 
         # Plot new data points
         if (plotPoint):
-            self.ax1.plot(new_Xdata, new_Ydata,
-                        color="red",
-                        marker='o',
-                        ls='None',  # No line, since it's a single point (or points)
-                        linewidth=2)
+            axis.plot(new_Xdata, new_Ydata,
+                      color="red",
+                      marker='o',
+                      ls='None',  # No line, since it's a single point (or points)
+                      linewidth=2)
         else:  
-            self.ax1.plot(new_Xdata, new_Ydata,
-                          color="red",  # Default color if not specified
-                          marker=".",
-                          ls=":",    # Default line style
-                          linewidth=1)  # Default line width
+            axis.plot(new_Xdata, new_Ydata,
+                      color="red",  # Default color if not specified
+                      marker=".",
+                      ls=":",    # Default line style
+                      linewidth=1)  # Default line width
         #end-if-else
         
         # Redraw the plot and pause to allow real-time updates
-        self.fig1.canvas.set_window_title('Plot' + plot_Suffix_title)
+        figure.canvas.set_window_title('Plot' + plot_Suffix_title)
         plt.draw()
         plt.pause(pause_time)  # Pause to update the plot in real-time
         

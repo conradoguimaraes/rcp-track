@@ -141,7 +141,8 @@ while t <= simTime:
         arrayIndex += 1
         
         #Plot new Car position
-        env_map.add_data_to_plot(car.xArray, car.yArray,
+        env_map.add_data_to_plot(env_map.fig1, env_map.ax2,
+                                 car.xArray, car.yArray,
                                  pause_time = 0.025,
                                  plot_Suffix_title = " t = " + "{:.2f}".format(t))
         
